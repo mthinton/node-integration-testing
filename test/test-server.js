@@ -61,6 +61,8 @@ describe("Shopping List", function() {
       });
   });
 
+
+
   // test strategy:
   //  1. make a POST request with data for a new item
   //  2. inspect response object and prove it has right
@@ -150,3 +152,35 @@ describe("Shopping List", function() {
     );
   });
 });
+
+describe("Recipes", function(){
+  before(function() {
+    return runServer();
+  });
+
+  // although we only have one test module at the moment, we'll
+  // close our server at the end of these tests. Otherwise,
+  // if we add another test module that also has a `before` block
+  // that starts our server, it will cause an error because the
+  // server would still be running from the previous tests.
+  after(function() {
+    return closeServer();
+  });
+  
+  it("should get recipe items on GET", function(){
+    return chai.request(app)
+    .get("/recipes")
+    .then(function(res){
+      expect(res).to.be.json;
+      expect(res.body).to.be.a("array");
+
+      res.body.forEach( function(recipe) {
+        const expectedProperties = ['name', 'id', 'ingredients'];
+        expect(recipe).to.be.a("object");
+        expect(recipe).to.include.keys(expectedProperties);
+        expect(recipe.ingredients).to.be.a("array");
+
+      })
+    })
+  })
+})
