@@ -69,13 +69,18 @@ router.put("/:id", (req, res) => {
     console.error(message);
     return res.status(400).send(message);
   }
+<<<<<<< HEAD
   console.log(`Updating shopping list item on PUT \`${req.params.id}\``);
   Recipes.update({
+=======
+  console.log(`Updating shopping list item \`${req.params.id}\``);
+  const updatedItem = Recipes.update({
+>>>>>>> a29e5c25f7c605c400825de2f4fde0a0f9bac7d0
     id: req.params.id,
     name: req.body.name,
     ingredients: req.body.ingredients
   });
-  res.status(204).end();
+  res.status(200).json(updatedItem);
 });
 
 module.exports = router;
