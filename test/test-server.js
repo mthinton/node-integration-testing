@@ -184,5 +184,50 @@ describe("Recipes", function(){
     })
   })
 
-  
+  it("should post new item to Recipes on POST", function(){
+    const newRecipe = {name: "Chocolate Milk", ingredients: ["Cocoa", "milk", "sugar"]}
+    return chai.request(app)
+    .post("/recipes")
+    .send(newRecipe)
+    .then(function(res){
+      expect(res).to.have.status(201);
+      expect(res.body).to.be.a("object");
+      expect(res.body).to.include.keys('name', 'id', 'ingredients');
+      expect(res.body.ingredients).to.be.a("array");
+      expect(res.body.id).to.not.equal(null)
+      expect(res.body).to.deep.equal(Object.assign(newRecipe, {id: res.body.id}));
+    })
+  })
+
+  it("should update item to Recipes on PUT", function(){
+    const updatedData = {name: "Chocolate Bunny Milk", ingredients: ["Chocolate Bunnies", "Milk"]};
+    return chai.request(app)
+    .get("/recipes")
+    .then(function(res){
+      updatedData.id = res.body[0].id;
+      return chai.request(app)
+      .put(`/recipes/${updatedData.id}`)
+      .send(updatedData)
+    })
+    .then(function(res){
+      expect(res).to.be.json;
+      expect(res).to.have.status(200);
+      expect(res.body).to.be.a('object');
+      expect(res.body).to.deep.equal(updatedData)
+    })
+  })
+
+  it("should delete items from Recipes on DELETE", function(){
+    return chai.request(app)
+    .get('/recipes')
+    .then(function(res){
+      return chai.request(app)
+      .delete(`/recipes/${res.body[0].id}`)
+    })
+    .then(function(res){
+      expect(res).to.have.status(204);
+    })
+
+  })
 })
+
